@@ -1,48 +1,39 @@
+<%@page import="test.cafe.dao.CafeDao"%>
+<%@page import="test.cafe.dto.CafeDto"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	//1. 수정할 글번호를 읽어온다.
+	int num=Integer.parseInt(request.getParameter("num"));
+	//2. DB 에서 수정할 글정보를 읽어온다.
+	CafeDto dto=CafeDao.getInstance().getData(num);
+	//3. 글수정 폼을 응답 한다.
+%>    
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>/cafe/private/insertform.jsp</title>
+<title>/cafe/private/updateform.jsp</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
-<style>
-	img{
-		max-width: 100%;
-	}
-</style>
 </head>
 <body>
 	<div class="container">
-		<h1>새글 작성 폼 입니다.</h1>
-		<form action="insert.jsp" method="post">
+		<h1>글 수정 양식</h1>
+		<form action="update.jsp" method="post">
+			<input type="hidden" name="num" value="<%=dto.getNum() %>"/>
 			<div class="mb-2">
 				<label class="form-label" for="title">제목</label>
-				<input class="form-control" type="text" name="title" id="title"/>
+				<input class="form-control" type="text" name="title" id="title" value="<%=dto.getTitle() %>"/>
 			</div>
 			<div class="mb-2">
 				<label class="form-label" for="content">내용</label>
-				<textarea class="form-control" name="content" id="content"></textarea>
+				<textarea class="form-control" id="content" name="content" rows="10"><%=dto.getContent() %></textarea>
 			</div>
-			<button class="btn btn-primary btn-sm" type="submit" onclick="submitContents(this);">저장</button>
+			<button class="btn btn-primary btn-sm" type="submit" onclick="submitContents(this)">수정확인</button>
+			<button class="btn btn-danger btn-sm" type="reset">취소</button>
 		</form>
 	</div>
-	<%--
-		[ SmartEditor 를 사용하기 위한 설정 ]
-		
-		1. webapp 에 SmartEditor  폴더를 복사해서 붙여 넣기
-		2. webapp 에 upload 폴더 만들어 두기
-		3. webapp/WEB-INF/lib 폴더에 
-		   commons-io.jar 파일과 commons-fileupload.jar 파일 붙여 넣기
-		4. <textarea id="content" name="content"> 
-		   content 가 아래의 javascript 에서 사용 되기때문에 다른 이름으로 바꾸고 
-		      싶으면 javascript 에서  content 를 찾아서 모두 다른 이름으로 바꿔주면 된다. 
-		5. textarea 의 크기가 SmartEditor  의 크기가 된다.
-		6. 폼을 제출하고 싶으면  submitContents(this) 라는 javascript 가 
-		      폼 안에 있는 버튼에서 실행되면 된다.
- 	--%>
-	
 	<!-- SmartEditor 에서 필요한 javascript 로딩  -->
 	<script src="${pageContext.request.contextPath }/SmartEditor/js/HuskyEZCreator.js"></script>
 	<script>
@@ -82,13 +73,11 @@
 		}
 			
 		function submitContents(elClickedObj) {
-			//SmartEditor 에 의해 만들어진(작성한 글) 내용이 textarea 의 value가 되도록 한다.
 			oEditors.getById["content"].exec("UPDATE_CONTENTS_FIELD", []);	// 에디터의 내용이 textarea에 적용됩니다.
 			
 			// 에디터의 내용에 대한 값 검증은 이곳에서 document.getElementById("content").value를 이용해서 처리하면 됩니다.
 			
 			try {
-				//폼 제출하기
 				elClickedObj.form.submit();
 			} catch(e) {}
 		}
@@ -101,6 +90,16 @@
 	</script>	
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
 
 
