@@ -1,10 +1,10 @@
-<%@page import="test.cafe.dao.CafeDao"%>
-<%@page import="test.cafe.dto.CafeDto"%>
+<%@page import="test.eat.dao.EatDao"%>
+<%@page import="test.eat.dto.EatDto"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	//한 페이지에 몇개씩 표시할 것인지
+//한 페이지에 몇개씩 표시할 것인지
 	final int PAGE_ROW_COUNT=5;
 	//하단 페이지를 몇개씩 표시할 것인지
 	final int PAGE_DISPLAY_COUNT=5;
@@ -29,7 +29,7 @@
 	//하단 끝 페이지 번호
 	int endPageNum=startPageNum+PAGE_DISPLAY_COUNT-1;
 	//전체 글의 갯수
-	int totalRow=CafeDao.getInstance().getCount();
+	int totalRow=EatDao.getInstance().getCount();
 	
 	
 	//전체 페이지의 갯수 구하기
@@ -40,11 +40,11 @@
 	}
 	
 	//CafeDto 객체에 startRowNum 과 endRowNum 을 담아서 
-	CafeDto dto=new CafeDto();
+	EatDto dto=new EatDto();
 	dto.setStartRowNum(startRowNum);
 	dto.setEndRowNum(endRowNum);
 	//글 목록을 얻어온다. 
-	List<CafeDto> list=CafeDao.getInstance().getList(dto);
+	List<EatDto> list=EatDao.getInstance().getList(dto);
 %>    
 <!DOCTYPE html>
 <html>
@@ -68,7 +68,9 @@
 				</tr>
 			</thead>
 			<tbody>
-			<%for(CafeDto tmp:list){ %>
+			<%
+			for(EatDto tmp:list){
+			%>
 				<tr>
 					<td><%=tmp.getNum() %></td>
 					<td><%=tmp.getWriter() %></td>

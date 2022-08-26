@@ -1,20 +1,20 @@
-<%@page import="test.cafe.dto.CafeDto"%>
-<%@page import="test.cafe.dao.CafeDao"%>
+<%@page import="test.eat.dto.EatDto"%>
+<%@page import="test.eat.dao.EatDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	//1. 폼 전송되는 글의 제목, 내용을 읽어온다. 
+//1. 폼 전송되는 글의 제목, 내용을 읽어온다. 
 	String title=request.getParameter("title");
 	String content=request.getParameter("content");
 	//2. 세션에서 글 작성자를 읽어온다.
 	String writer=(String)session.getAttribute("id");
 	//3. 읽어온 모든 정보를 CafeDto 에 담는다.
-	CafeDto dto=new CafeDto();
+	EatDto dto=new EatDto();
 	dto.setWriter(writer);
 	dto.setTitle(title);
 	dto.setContent(content);
 	//4. CafeDao 를 이용해서 DB 에 저장하고
-	boolean isSuccess=CafeDao.getInstance().insert(dto);
+	boolean isSuccess=EatDao.getInstance().insert(dto);
 	//5. 응답한다.
 %>
 <!DOCTYPE html>

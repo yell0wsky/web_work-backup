@@ -1,11 +1,11 @@
-<%@page import="test.cafe.dao.CafeDao"%>
-<%@page import="test.cafe.dto.CafeDto"%>
+<%@page import="test.eat.dao.EatDao"%>
+<%@page import="test.eat.dto.EatDto"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>    
+    
 <%
-	//한 페이지에 몇개씩 표시할 것인지
+//한 페이지에 몇개씩 표시할 것인지
 	final int PAGE_ROW_COUNT=5;
 	//하단 페이지를 몇개씩 표시할 것인지
 	final int PAGE_DISPLAY_COUNT=5;
@@ -30,7 +30,7 @@
 	//하단 끝 페이지 번호
 	int endPageNum=startPageNum+PAGE_DISPLAY_COUNT-1;
 	//전체 글의 갯수
-	int totalRow=CafeDao.getInstance().getCount();
+	int totalRow=EatDao.getInstance().getCount();
 	
 	
 	//전체 페이지의 갯수 구하기
@@ -41,31 +41,27 @@
 	}
 	
 	//CafeDto 객체에 startRowNum 과 endRowNum 을 담아서 
-	CafeDto dto=new CafeDto();
+	EatDto dto=new EatDto();
 	dto.setStartRowNum(startRowNum);
 	dto.setEndRowNum(endRowNum);
 	//글 목록을 얻어온다. 
-	List<CafeDto> list=CafeDao.getInstance().getList(dto);
-	
-	// list 라는 키값으로 request scope 에 담기 
-	request.setAttribute("list", list);
-	// 페이징 처리에 필요한 값을 request scope 에 담기
-	request.setAttribute("pageNum", pageNum);
-	request.setAttribute("startPageNum", startPageNum);
-	request.setAttribute("endPageNum", endPageNum);
-	request.setAttribute("totalPageCount", totalPageCount);
+	List<EatDto> list=EatDao.getInstance().getList(dto);
 %>    
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>/cafe/list2.jsp</title>
+<title>/cafe/list.jsp</title>
+<jsp:include page="/comp/font.jsp">
+	<jsp:param value="eat" name="thisPage"/>
+</jsp:include>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 </head>
 <body>
+<jsp:include page="/comp/navbar.jsp"></jsp:include>
 	<div class="container">
-		<h1>글 목록 입니다.</h1>
+		<h1 class="text-center mt-4 mb-4">맛집 추천</h1>
 		<table class="table table-striped">
 			<thead class="table-dark">
 				<tr>
@@ -74,54 +70,57 @@
 					<th>제목</th>
 					<th>조회수</th>
 					<th>등록일</th>
+					<th>좋아요</th>					
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="tmp" items="${requestScope.list }">
-					<tr>
-						<td>${tmp.num }</td>
-						<td>${tmp.writer }</td>
-						<td><a href="detail.jsp?num=${tmp.num }">${tmp.title }</a></td>
-						<td>${tmp.viewCount }</td>
-						<td>${tmp.regdate }</td>
-					</tr>
-				</c:forEach>
+			<%
+			for(EatDto tmp:list){
+			%>
+				<tr>
+					<td><%=tmp.getNum() %></td>
+					<td><%=tmp.getWriter() %></td>
+					<td>
+						<a href="detail.jsp?num=<%=tmp.getNum() %>"><%=tmp.getTitle() %></a>
+					</td>
+					<td><%=tmp.getViewCount() %></td>
+					<td><%=tmp.getRegdate() %></td>
+					<td><%=tmp.getFavorite() %></td>
+				</tr>
+			<%} %>	
 			</tbody>
 		</table>
 		<nav>
 			<ul class="pagination">
+				
+				<%if(startPageNum != 1){ %>
+					<li class="page-item">
+						<a class="page-link" href="list.jsp?pageNum=<%=startPageNum-1 %>">Prev</a>
+					</li>
+				<%} %>
 			
-				<c:if test="${startPageNum ne 1 }">
-					<li class="page-item">
-						<a class="page-link" href="list.jsp?pageNum=${startPageNum-1 }">Prev</a>
-					</li>
-				</c:if>
+				<%for(int i=startPageNum; i<=endPageNum; i++){ %>
+					<%if(pageNum == i){ %>
+						<li class="page-item active">
+							<a class="page-link" href="list.jsp?pageNum=<%=i %>"><%=i %></a>
+						</li>
+					<%}else{ %>
+						<li class="page-item">
+							<a class="page-link" href="list.jsp?pageNum=<%=i %>"><%=i %></a>
+						</li>
+					<%} %>
+				<%} %>	
 				
-				<c:forEach var="i" begin="${startPageNum }" end="${endPageNum }">
-					<c:choose>
-						<c:when test="${pageNum eq i }">
-							<li class="page-item active">
-								<a class="page-link" href="list.jsp?pageNum=${i }">${i }</a>
-							</li>
-						</c:when>
-						<c:otherwise>
-							<li class="page-item">
-								<a class="page-link" href="list.jsp?pageNum=${i }">${i }</a>
-							</li>
-						</c:otherwise>
-					</c:choose>
-				</c:forEach>
-				
-				<c:if test="${endPageNum lt totalPageCount }">
+				<%if(endPageNum < totalPageCount){ %>
 					<li class="page-item">
-						<a class="page-link" href="list.jsp?pageNum=${endPageNum+1 }">Next</a>
+						<a class="page-link" href="list.jsp?pageNum=<%=endPageNum+1 %>">Next</a>
 					</li>
-				</c:if>
+				<%} %>
 				
 			</ul>
 		</nav>
 				
-		<a href="${pageContext.request.contextPath }/cafe/private/insertform.jsp">새글 작성</a>
+		<a href="${pageContext.request.contextPath }/eat/private/insertform.jsp">새글 작성</a>
 	</div>
 </body>
 </html>

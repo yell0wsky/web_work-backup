@@ -1,12 +1,12 @@
-<%@page import="test.cafe.dao.CafeDao"%>
-<%@page import="test.cafe.dto.CafeDto"%>
+<%@page import="test.eat.dao.EatDao"%>
+<%@page import="test.eat.dto.EatDto"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	//1. 수정할 글번호를 읽어온다.
+//1. 수정할 글번호를 읽어온다.
 	int num=Integer.parseInt(request.getParameter("num"));
 	//2. DB 에서 수정할 글정보를 읽어온다.
-	CafeDto dto=CafeDao.getInstance().getData(num);
+	EatDto dto=EatDao.getInstance().getData(num);
 	//3. 글수정 폼을 응답 한다.
 %>    
 <!DOCTYPE html>

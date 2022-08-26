@@ -5,7 +5,7 @@
     pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
-	//글목록
+//글목록
 	List<CafeDto> list=CafeDao.getInstance().getList();
 	request.setAttribute("list", list);
 %>    

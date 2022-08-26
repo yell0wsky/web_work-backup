@@ -1,16 +1,16 @@
-<%@page import="test.cafe.dao.CafeDao"%>
-<%@page import="test.cafe.dto.CafeDto"%>
+<%@page import="test.eat.dao.EatDao"%>
+<%@page import="test.eat.dto.EatDto"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	//GET 방식 파라미터로 전달되는 글 번호를 읽어온다. 
+//GET 방식 파라미터로 전달되는 글 번호를 읽어온다. 
 	int num=Integer.parseInt(request.getParameter("num"));
 	//글 번호를 이용해서 글 하나의 정보를 읽어온다. 
-	CafeDto dto=CafeDao.getInstance().getData(num);
+	EatDto dto=EatDao.getInstance().getData(num);
 	//로그인된 아이디
 	String id=(String)session.getAttribute("id");
 	//조회수 올리기
-	CafeDao.getInstance().addViewCount(num);
+	EatDao.getInstance().addViewCount(num);
 %>    
 <!DOCTYPE html>
 <html>

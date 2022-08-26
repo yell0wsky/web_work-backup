@@ -1,6 +1,6 @@
-package test.cafe.dto;
+package test.eat.dto;
 
-public class CafeDto {
+public class EatDto {
 	private int num;
 	private String writer;
 	private String title;
@@ -9,11 +9,11 @@ public class CafeDto {
 	private String regdate;
 	private int startRowNum;
 	private int endRowNum;
+	private int favorite;
 	
-	public CafeDto() {}
+	public EatDto() {}
 
-	public CafeDto(int num, String writer, String title, String content, int viewCount, String regdate, int startRowNum,
-			int endRowNum) {
+	public EatDto(int num, String writer, String title, String content, int viewCount, String regdate, int startRowNum, int endRowNum, int favorite) {
 		super();
 		this.num = num;
 		this.writer = writer;
@@ -23,6 +23,7 @@ public class CafeDto {
 		this.regdate = regdate;
 		this.startRowNum = startRowNum;
 		this.endRowNum = endRowNum;
+		this.favorite = favorite;
 	}
 
 	public int getNum() {
@@ -88,6 +89,13 @@ public class CafeDto {
 	public void setEndRowNum(int endRowNum) {
 		this.endRowNum = endRowNum;
 	}
-	
-	
+
+	public int getFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(int favorite) {
+		this.favorite = favorite;
+	}
+
 }

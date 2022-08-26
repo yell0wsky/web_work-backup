@@ -1,4 +1,4 @@
-package test.cafe.dao;
+package test.eat.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,17 +6,17 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import test.cafe.dto.CafeDto;
+import test.eat.dto.EatDto;
 import test.util.DbcpBean;
 
-public class CafeDao {
-	private static CafeDao dao;
+public class EatDao {
+	private static EatDao dao;
 	
-	private CafeDao() {}
+	private EatDao() {}
 	
-	public static CafeDao getInstance() {
+	public static EatDao getInstance() {
 		if(dao==null) {
-			dao=new CafeDao();
+			dao=new EatDao();
 		}
 		return dao;
 	}
@@ -53,7 +53,39 @@ public class CafeDao {
 		}
 	}
 	
-	public boolean update(CafeDto dto) {
+	public boolean addFavoriteCount(int num) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		int flag = 0;
+		try {
+			conn = new DbcpBean().getConn();
+			//실행할 sql 문
+			String sql = "UPDATE board_cafe"
+					+ " SET favorite=favorite+1"
+					+ " WHERE num=?";
+			pstmt = conn.prepareStatement(sql);
+			//? 에 값 바인딩하기
+			pstmt.setInt(1, num);
+			flag = pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+			}
+		}
+		if (flag > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean update(EatDto dto) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		int flag = 0;
@@ -119,9 +151,9 @@ public class CafeDao {
 	}
 	
 	//글 하나의 정보를 리턴하는 메소드
-	public CafeDto getData(int num) {
+	public EatDto getData(int num) {
 		
-		CafeDto dto=null;
+		EatDto dto=null;
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -129,7 +161,7 @@ public class CafeDao {
 		try {
 			conn = new DbcpBean().getConn();
 			//select 문의 뼈대 구성하기
-			String sql = "SELECT writer, title, content, viewCount, regdate"
+			String sql = "SELECT writer, title, content, viewCount, regdate, favorite"
 					+ " FROM board_cafe"
 					+ " WHERE num=?";
 			pstmt = conn.prepareStatement(sql);
@@ -138,13 +170,14 @@ public class CafeDao {
 			//sql 문 수행하고 ResultSet 객체 얻어내기
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
-				dto=new CafeDto();
+				dto=new EatDto();
 				dto.setNum(num);
 				dto.setWriter(rs.getString("writer"));
 				dto.setTitle(rs.getString("title"));
 				dto.setContent(rs.getString("content"));
 				dto.setViewCount(rs.getInt("viewCount"));
 				dto.setRegdate(rs.getString("regdate"));
+				dto.setFavorite(rs.getInt("favorite"));
 			}
 
 		} catch (Exception e) {
@@ -164,7 +197,7 @@ public class CafeDao {
 	}
 	
 	//글 하나의 정보를 저장하는 메소드 
-	public boolean insert(CafeDto dto) {
+	public boolean insert(EatDto dto) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		int flag = 0;
@@ -236,9 +269,9 @@ public class CafeDao {
 	}
 	
 	//페이징 처리에 부합하는 글 목록을 리턴하는 메소드 
-	public List<CafeDto> getList(CafeDto dto){
+	public List<EatDto> getList(EatDto dto){
 		
-		List<CafeDto> list=new ArrayList<CafeDto>();
+		List<EatDto> list=new ArrayList<EatDto>();
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -250,7 +283,7 @@ public class CafeDao {
 					+ " FROM"
 					+ "    (SELECT result1.*, ROWNUM AS rnum"
 					+ "    FROM"
-					+ "        (SELECT num, writer, title, viewCount, regdate"
+					+ "        (SELECT num, writer, title, viewCount, regdate, favorite"
 					+ "        FROM board_cafe"
 					+ "        ORDER BY num DESC) result1)"
 					+ " WHERE rnum BETWEEN ? AND ?";
@@ -262,12 +295,13 @@ public class CafeDao {
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				//select 된 row 하나의 정보를 CafeDto 객체를 생성해서 담고 
-				CafeDto tmp=new CafeDto();
+				EatDto tmp=new EatDto();
 				tmp.setNum(rs.getInt("num"));
 				tmp.setWriter(rs.getString("writer"));
 				tmp.setTitle(rs.getString("title"));
 				tmp.setViewCount(rs.getInt("viewCount"));
 				tmp.setRegdate(rs.getString("regdate"));
+				tmp.setFavorite(rs.getInt("favorite"));
 				//CafeDto 객체의 참조값을 List 에 누적 시키기
 				list.add(tmp);
 			}
@@ -289,9 +323,9 @@ public class CafeDao {
 	}
 	
 	//전체 글의 목록을 리턴하는 메소드 
-	public List<CafeDto> getList(){
+	public List<EatDto> getList(){
 		
-		List<CafeDto> list=new ArrayList<CafeDto>();
+		List<EatDto> list=new ArrayList<EatDto>();
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -299,7 +333,7 @@ public class CafeDao {
 		try {
 			conn = new DbcpBean().getConn();
 			//select 문의 뼈대 구성하기
-			String sql = "SELECT num, writer, title, viewCount, regdate"
+			String sql = "SELECT num, writer, title, viewCount, regdate, favorite"
 					+ " FROM board_cafe"
 					+ " ORDER BY num DESC";
 			pstmt = conn.prepareStatement(sql);
@@ -309,12 +343,13 @@ public class CafeDao {
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				//select 된 row 하나의 정보를 CafeDto 객체를 생성해서 담고 
-				CafeDto dto=new CafeDto();
+				EatDto dto=new EatDto();
 				dto.setNum(rs.getInt("num"));
 				dto.setWriter(rs.getString("writer"));
 				dto.setTitle(rs.getString("title"));
 				dto.setViewCount(rs.getInt("viewCount"));
 				dto.setRegdate(rs.getString("regdate"));
+				dto.setFavorite(rs.getInt("favorite"));
 				//CafeDto 객체의 참조값을 List 에 누적 시키기
 				list.add(dto);
 			}
